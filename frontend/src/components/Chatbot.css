@@ -1,0 +1,6 @@
+.chat-suggestions{display:flex;flex-wrap:wrap;gap:6px;align-self:flex-start;max-width:95%}
+.chat-suggestions button{border:1px solid #dce5d5;background:#fff;border-radius:16px;padding:7px 10px;color:#45634b;font:600 10px 'DM Sans';cursor:pointer}
+.chat-suggestions button:hover{border-color:#a8bf70;background:#f7faef}
+.chat-result span{display:grid;gap:3px}
+.chat-result small{color:#718176;font-size:9px;font-weight:400}
+.chat-ai-status{display:block;margin-top:7px;color:#896b2c;font-size:9px;line-height:1.4}

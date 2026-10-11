@@ -1,0 +1,11 @@
+.env
+.env.*
+!.env.example
+node_modules/
+dist/
+target/
+backend/uploads/
+*.log
+.idea/
+.vscode/
+.DS_Store

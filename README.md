@@ -1,5 +1,7 @@
 # BorrowBox
 
+BorrowBox is a campus rental marketplace where students can list, discover, and request items to borrow. Built with React, Spring Boot, and MySQL, with authentication, image uploads, rental requests, and an optional Gemini-powered assistant. Payments are simulated for demonstration.
+
 BorrowBox is a college-focused peer-to-peer rental marketplace. Students can share useful equipment, request rentals, record a simulated payment, mark a return, and leave a review. It uses a React frontend, a Spring Boot REST API, and MySQL configured for Aiven Cloud MySQL.
 
 ## Features

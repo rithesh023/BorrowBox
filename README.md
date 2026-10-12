@@ -48,9 +48,14 @@ Optional values:
 - `AI_MODEL` and `AI_API_URL` configure the model and OpenAI-compatible chat-completions endpoint.
 - `FRONTEND_ORIGIN` defaults to `http://localhost:5173` for Vite.
 - `PORT` defaults to `8900`.
-- `UPLOAD_DIR` defaults to `uploads` under the backend working directory. Uploaded files are validated, limited to 5 MB, and served through `/api/uploads/...`.
+- Listing photo uploads use Cloudinary when `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and `CLOUDINARY_API_SECRET` are set. Keep the API secret on the backend only. Local development can leave these blank and uses `UPLOAD_DIR` (default `uploads`); deployed services should use Cloudinary or another persistent object store because Render's free filesystem is temporary.
+- `CLOUDINARY_REQUIRED` defaults to `false` locally. Set it to `true` in production so uploads fail clearly instead of being saved to temporary storage when credentials are missing.
 
-The listing form can upload an image directly from the computer. A remote image URL is optional; it must point to the actual image file, not a search results or sharing page.
+The listing form can upload an image directly from the computer. On Render, uploaded images are stored permanently in Cloudinary and the listing saves the returned HTTPS URL. A remote image URL is optional; it must point to the actual image file, not a search results or sharing page. After switching to Cloudinary, re-upload photos for existing listings whose old `/api/uploads/...` files were lost during a Render restart or deploy.
+
+### Configure persistent image uploads on Render
+
+Create a Cloudinary account and copy the **Cloud name**, **API Key**, and **API Secret** from its dashboard. In Render, open the BorrowBox backend service → **Environment**, then add `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and `CLOUDINARY_API_SECRET` with those values. Also set `CLOUDINARY_REQUIRED` to `true`, save, and redeploy. Keep the API secret in Render only; never put it in Vercel or GitHub. Once deployed, edit each old listing and upload its photo again.
 
 The backend imports `backend/.env` when started with `backend` as the current directory. Aiven credentials and JWT secrets are never hard-coded in Java source.
 
@@ -158,4 +163,4 @@ docker-compose.yml                     Frontend/backend services using Aiven MyS
 
 ## Future enhancements
 
-Real payment provider integration, image/object storage, email notifications, category administration, deployment-specific domains/secrets, rate limiting, and user-to-user messaging can be added after the college demo scope.
+Real payment provider integration, email notifications, category administration, deployment-specific domains/secrets, rate limiting, and user-to-user messaging can be added after the college demo scope.

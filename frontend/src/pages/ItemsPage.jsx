@@ -11,13 +11,14 @@ export default function ItemsPage() {
   const [page, setPage] = useState({ content: [], totalPages: 0, number: 0 });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  useEffect(() => { api.get('/categories').then(({ data }) => setCategories(data)).catch(setError); }, []);
+  const [retryCount, setRetryCount] = useState(0);
+  useEffect(() => { api.get('/categories').then(({ data }) => setCategories(data)).catch(() => setCategories([])); }, []);
   useEffect(() => {
     const nextForm = { q: params.get('q') || '', category: params.get('category') || '', maxPrice: params.get('maxPrice') || '', condition: params.get('condition') || '', minRating: params.get('minRating') || '' };
     setForm(nextForm); setLoading(true); setError(null);
     api.get('/items', { params: { ...Object.fromEntries(Object.entries(nextForm).filter(([, value]) => value)), available: true, page: params.get('page') || 0, size: 12 } })
       .then(({ data }) => setPage(data)).catch(setError).finally(() => setLoading(false));
-  }, [params]);
+  }, [params, retryCount]);
   function submit(event) {
     event.preventDefault();
     const next = Object.fromEntries(Object.entries(form).filter(([, value]) => value));
@@ -32,7 +33,7 @@ export default function ItemsPage() {
       <button className="primary-button">Apply filters</button>
     </form>
     <ErrorNotice error={error} />
-    {loading ? <p className="loading">Loading listings…</p> : page.content?.length ? <><p className="result-count">{page.totalElements} available listing{page.totalElements === 1 ? '' : 's'}</p><div className="item-grid">{page.content.map((item) => <ItemCard item={item} key={item.id} />)}</div>
+    {loading ? <p className="loading">Loading listings…</p> : error ? <div className="empty-results"><span>↻</span><h2>Listings didn’t load</h2><p>Your listings are still saved. The server may be waking up. Wait a little, then try again.</p><button className="text-button" onClick={() => setRetryCount((count) => count + 1)}>Try again</button></div> : page.content?.length ? <><p className="result-count">{page.totalElements} available listing{page.totalElements === 1 ? '' : 's'}</p><div className="item-grid">{page.content.map((item) => <ItemCard item={item} key={item.id} />)}</div>
       {page.totalPages > 1 && <div className="pagination"><button disabled={page.number <= 0} onClick={() => setParams({ ...Object.fromEntries(params), page: String(page.number - 1) })}>← Previous</button><span>Page {page.number + 1} of {page.totalPages}</span><button disabled={page.number + 1 >= page.totalPages} onClick={() => setParams({ ...Object.fromEntries(params), page: String(page.number + 1) })}>Next →</button></div>}</>
       : <div className="empty-results"><span>⌕</span><h2>No matching listings</h2><p>Try another search or clear a filter.</p><button className="text-button" onClick={() => { setForm({ q: '', category: '', maxPrice: '', condition: '', minRating: '' }); setParams({}); }}>Clear filters</button></div>}
   </main>;

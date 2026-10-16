@@ -2,8 +2,8 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8900/api',
-  // Cloud database wake-ups and cold backend requests can take longer than 10 seconds.
-  timeout: 30000,
+  // Render's free service can take around a minute to wake after inactivity.
+  timeout: 90000,
 });
 
 export function resolveImageUrl(value) {
